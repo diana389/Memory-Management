@@ -4,57 +4,20 @@
 #include "structs.h"
 #include <inttypes.h>
 
-// void alloc_mem(void *arr, int *len)
-// {
-// 	if (type == '1')
-// 	{
-// 		if (arr == NULL)
-// 		arr = malloc()
-// 	}
-// 	else
-// 	{
-// 		if (type == '2')
-// 		{
-// 		}
-// 		else if (type == '3')
-// 		{
-// 		}
-// 	}
-// }
-
-void print(void *arr, int len)
+void print_pt_mine(void *arr, int len)
 {
 	void *ptr = arr;
 	int i;
-	// printf("arr: %p\n", arr);
-	// printf("len: %d\n", len);
-	while(arr-ptr < len)
+	unsigned char type;
+
+	while (arr - ptr < len)
 	{
-		// printf("1arr: %p\n", arr);
-		printf("type: %c\n", *(char *)arr);
-		arr += 4 * sizeof(char);
+		printf("type: %hhu\n", *(unsigned char *)arr);
+		type = *(unsigned char *)arr;
+		arr += 4 * sizeof(unsigned char);
 
-		// printf("2arr: %p\n", arr);
-		printf("len: %d\n", *(int *)arr);
-		arr += sizeof(int);
-
-		// // printf("3arr: %p\n", arr);
-		// printf("dedicator: %s\n", *(char **)arr);
-		// arr += sizeof(char *);
-
-		// // printf("4arr: %p\n", arr);
-		// printf("suma1: %d\n", *(int *)arr);
-		// arr += sizeof(int);
-
-		// // printf("5arr: %p\n", arr);
-		// printf("suma2: %d\n", *(int *)arr);
-		// arr += sizeof(int);
-
-		// // printf("6arr: %p\n", arr);
-		// printf("dedicatul: %s\n", *(char **)arr);
-		// arr += sizeof(char *);
-
-		// // printf("7arr: %p\n", arr);
+		printf("len: %d\n", *(unsigned int *)arr);
+		arr += sizeof(unsigned int);
 
 		printf("dedicator: ");
 		while (*(char *)arr != '\0')
@@ -65,12 +28,6 @@ void print(void *arr, int len)
 		arr += sizeof(char);
 		printf("\n");
 
-		printf("suma1: %d\n", *(int *)arr);
-		arr += sizeof(int);
-
-		printf("suma2: %d\n", *(int *)arr);
-		arr += sizeof(int);
-
 		printf("dedicatul: ");
 		while (*(char *)arr != '\0')
 		{
@@ -79,24 +36,115 @@ void print(void *arr, int len)
 		}
 		arr += sizeof(char);
 		printf("\n");
+
+		if (type == 1)
+		{
+			printf("suma1: %" PRId8 "\n", *(int8_t *)arr);
+			arr += sizeof(int8_t);
+
+			printf("suma2: %" PRId8 "\n", *(int8_t *)arr);
+			arr += sizeof(int8_t);
+		}
+
+		else
+		{
+			if (type == 2)
+			{
+				printf("suma1: %" PRId16 "\n", *(int16_t *)arr);
+				arr += sizeof(int16_t);
+
+				printf("suma2: %" PRId32 "\n", *(int32_t *)arr);
+				arr += sizeof(int32_t);
+			}
+			else
+			{
+				printf("suma1: %" PRId32 "\n", *(int32_t *)arr);
+				arr += sizeof(int32_t);
+
+				printf("suma2: %" PRId32 "\n", *(int32_t *)arr);
+				arr += sizeof(int32_t);
+			}
+		}
 	}
 	arr = ptr;
-	// printf("arr at end print: %p\n", arr);
+}
+
+void print(void *arr, int len)
+{
+	void *ptr = arr;
+	int i;
+	unsigned char type;
+
+	while (arr - ptr < len)
+	{
+		printf("Tipul: %hhu\n", *(unsigned char *)arr);
+		type = *(unsigned char *)arr;
+		arr += 4 * sizeof(unsigned char);
+
+		arr += sizeof(unsigned int);
+
+		while (*(char *)arr != '\0')
+		{
+			printf("%c", *(char *)arr);
+			arr += sizeof(char);
+		}
+		arr += sizeof(char);
+
+		printf(" pentru ");
+
+		while (*(char *)arr != '\0')
+		{
+			printf("%c", *(char *)arr);
+			arr += sizeof(char);
+		}
+		arr += sizeof(char);
+
+		printf("\n");
+
+		if (type == 1)
+		{
+			printf("%" PRId8 "\n", *(int8_t *)arr);
+			arr += sizeof(int8_t);
+
+			printf("%" PRId8 "\n", *(int8_t *)arr);
+			arr += sizeof(int8_t);
+		}
+
+		else
+		{
+			if (type == 2)
+			{
+				printf("%" PRId16 "\n", *(int16_t *)arr);
+				arr += sizeof(int16_t);
+
+				printf("%" PRId32 "\n", *(int32_t *)arr);
+				arr += sizeof(int32_t);
+			}
+			else
+			{
+				printf("%" PRId32 "\n", *(int32_t *)arr);
+				arr += sizeof(int32_t);
+
+				printf("%" PRId32 "\n", *(int32_t *)arr);
+				arr += sizeof(int32_t);
+			}
+		}
+		printf("\n");
+	}
+
+	arr = ptr;
 }
 
 int add_last(void **arr, int *len, data_structure *data)
 {
-	// printf("arr in add_last: %p\n", *arr);
 	if (*len == 0)
 		*arr = malloc(sizeof(data->header) + data->header->len);
 	else if (*len > 0)
 		*arr = realloc(*arr, *len + sizeof(data->header) + data->header->len);
 
-	void *ptr = *arr, *ptr2 = data->data;
+	void *ptr = *arr;
 
 	*arr += *len;
-	// printf("size head: %d\n", sizeof(head));
-	// printf("size arr: %d\n", sizeof(data->header->len) + sizeof(data->header->type));
 
 	memcpy(*arr, &(data->header->type), sizeof(data->header->type));
 	*arr += 4 * sizeof(unsigned char);
@@ -104,41 +152,11 @@ int add_last(void **arr, int *len, data_structure *data)
 	*arr += sizeof(unsigned int);
 
 	memcpy(*arr, data->data, data->header->len);
-	// // arr += sizeof(head);
-
-	// // memcpy(arr + sizeof(data->header), data->data, 24);
-
-	// // printf("dedicator: %s\n", *(char **)data->data);
-	// memcpy(*arr, data->data, sizeof(char *));
-	// // printf("dedicator: %s\n", *(char **)arr);
-	// data->data += sizeof(char *);
-	// *arr += sizeof(char *);
-
-	// // printf("char* %d\n", sizeof(char*));
-
-	// // printf("suma1: %d\n", *(int *)data->data);
-	// memcpy(*arr, data->data, sizeof(int));
-	// // printf("suma1: %d\n", *(int *)arr);
-	// data->data += sizeof(int);
-	// *arr += sizeof(int);
-
-	// // printf("suma2: %d\n", *(int *)data->data);
-	// memcpy(*arr, data->data, sizeof(int));
-	// // printf("suma2: %d\n", *(int *)arr);
-	// data->data += sizeof(int);
-	// *arr += sizeof(int);
-
-	// // printf("dedicatul: %s\n", *(char **)data->data);
-	// memcpy(*arr, data->data, sizeof(char *));
-	// // printf("dedicatul: %s\n", *(char **)arr);
 
 	*arr = ptr;
-	data->data = ptr2;
 	*len += sizeof(data->header) + data->header->len;
-	// printf("!!!!!!!1arr: %p\n", arr);
-	// print(*arr, *len);
-	// printf("arr in end add: %p\n", *arr);
-	return 1;
+
+	return 0;
 }
 
 // int add_at(void **arr, int *len, data_structure *data, int index)
@@ -169,58 +187,141 @@ void print_data(data_structure *data)
 	data->data += sizeof(char);
 	printf("\n");
 
-	printf("suma1: %d\n", *(int *)data->data);
-	data->data += sizeof(int);
-
-	printf("suma2: %d\n", *(int *)data->data);
-	data->data += sizeof(int);
-
 	printf("dedicatul: ");
 	while (*(char *)data->data != '\0')
 	{
 		printf("%c", *(char *)data->data);
 		data->data += sizeof(char);
 	}
+	data->data += sizeof(char);
 	printf("\n");
+
+	if (data->header->type == 1)
+	{
+		printf("suma1: %" PRId8 "\n", *(int8_t *)data->data);
+		data->data += sizeof(int8_t);
+
+		printf("suma2: %" PRId8 "\n", *(int8_t *)data->data);
+		data->data += sizeof(int8_t);
+	}
+
+	if (data->header->type == 2)
+	{
+		printf("suma1: %" PRId16 "\n", *(int16_t *)data->data);
+		data->data += sizeof(int16_t);
+
+		printf("suma2: %" PRId32 "\n", *(int32_t *)data->data);
+		data->data += sizeof(int32_t);
+	}
+
+	if (data->header->type == 3)
+	{
+		printf("suma1: %" PRId32 "\n", *(int32_t *)data->data);
+		data->data += sizeof(int32_t);
+
+		printf("suma2: %" PRId32 "\n", *(int32_t *)data->data);
+		data->data += sizeof(int32_t);
+	}
 
 	data->data = ptr;
 }
 
-void add_new_data(data_structure *new_data, char *dedicator, int suma1, int suma2, char *dedicatul)
+void add_new_data(data_structure *new_data, unsigned char type, char *dedicator, char *dedicatul)
 {
 	new_data->header = malloc(sizeof(head));
 
-	new_data->header->type = '1';
-	new_data->header->len = (strlen(dedicator) + strlen(dedicatul) + 2)*sizeof(char) + 2 * sizeof(int);
-	printf("len in add1: %d\n", new_data->header->len);
-	new_data->data = malloc(new_data->header->len);
+	new_data->header->type = type;
 
-	void *ptr = new_data->data;
+	if (type == 1)
+	{
+		int8_t suma1, suma2;
+		scanf("%s%" SCNd8 "%" SCNd8 "%s", dedicator, &suma1, &suma2, dedicatul);
 
-	memcpy(new_data->data, dedicator, strlen(dedicator) + 1);
-	new_data->data += strlen(dedicator) + 1;
+		new_data->header->len = (strlen(dedicator) + strlen(dedicatul) + 2) * sizeof(char) + 2 * sizeof(int8_t);
+		new_data->data = malloc(new_data->header->len);
 
-	memcpy(new_data->data, &suma1, sizeof(int));
-	new_data->data += sizeof(int);
+		void *ptr = new_data->data;
 
-	memcpy(new_data->data, &suma2, sizeof(int));
-	new_data->data += sizeof(int);
+		memcpy(new_data->data, dedicator, strlen(dedicator) + 1);
+		new_data->data += strlen(dedicator) + 1;
 
-	memcpy(new_data->data, dedicatul, strlen(dedicatul) + 1);
+		memcpy(new_data->data, dedicatul, strlen(dedicatul) + 1);
+		new_data->data += strlen(dedicatul) + 1;
 
-	new_data->data = ptr;
+		memcpy(new_data->data, &suma1, sizeof(int8_t));
+		new_data->data += sizeof(int8_t);
 
-	//new_data->header->len = sizeof(new_data->data);
-	//printf("len in add2: %d\n", new_data->header->len);
+		memcpy(new_data->data, &suma2, sizeof(int8_t));
+		new_data->data += sizeof(int8_t);
 
-	//print_data(new_data);
+		new_data->data = ptr;
+	}
+	else
+	{
+		if (type == 2)
+		{
+			int16_t suma1;
+			int32_t suma2;
+			scanf("%s%" SCNd16 "%" SCNd32 "%s", dedicator, &suma1, &suma2, dedicatul);
+
+			new_data->header->len = (strlen(dedicator) + strlen(dedicatul) + 2) * sizeof(char) + sizeof(int16_t) + sizeof(int32_t);
+			new_data->data = malloc(new_data->header->len);
+
+			void *ptr = new_data->data;
+
+			memcpy(new_data->data, dedicator, strlen(dedicator) + 1);
+			new_data->data += strlen(dedicator) + 1;
+
+			memcpy(new_data->data, dedicatul, strlen(dedicatul) + 1);
+			new_data->data += strlen(dedicatul) + 1;
+
+			memcpy(new_data->data, &suma1, sizeof(int16_t));
+			new_data->data += sizeof(int16_t);
+
+			memcpy(new_data->data, &suma2, sizeof(int32_t));
+			new_data->data += sizeof(int32_t);
+
+			new_data->data = ptr;
+		}
+		else
+		{
+			if (type == 3)
+			{
+				int32_t suma1, suma2;
+				scanf("%s%" SCNd32 "%" SCNd32 "%s", dedicator, &suma1, &suma2, dedicatul);
+
+				new_data->header->len = (strlen(dedicator) + strlen(dedicatul) + 2) * sizeof(char) + 2 * sizeof(int32_t);
+				new_data->data = malloc(new_data->header->len);
+
+				void *ptr = new_data->data;
+
+				memcpy(new_data->data, dedicator, strlen(dedicator) + 1);
+				new_data->data += strlen(dedicator) + 1;
+
+				memcpy(new_data->data, dedicatul, strlen(dedicatul) + 1);
+				new_data->data += strlen(dedicatul) + 1;
+
+				memcpy(new_data->data, &suma1, sizeof(int32_t));
+				new_data->data += sizeof(int32_t);
+
+				memcpy(new_data->data, &suma2, sizeof(int32_t));
+				new_data->data += sizeof(int32_t);
+
+				new_data->data = ptr;
+			}
+			else
+				return -1;
+		}
+	}
+	// print_data(new_data);
 }
 
 int main()
 {
 	void *arr = NULL;
-	int len = 0, exit = 0, suma1 = 7, suma2 = 13, ceva = 7;
+	int len = 0, exit = 0, suma1, suma2;
 	char command[257], dedicator[30] = "ion", dedicatul[30] = "maria";
+	unsigned char type;
 
 	while (exit == 0)
 	{
@@ -228,14 +329,11 @@ int main()
 
 		if (strcmp(command, "insert") == 0)
 		{
-			scanf("%s%d%d%s", dedicator, &suma1, &suma2, dedicatul);
-			fflush(stdin);
-
+			scanf("%hhu", &type);
 			data_structure *new_data = (data_structure *)malloc(sizeof(data_structure));
-			add_new_data(new_data, dedicator, suma1, suma2, dedicatul);
+			add_new_data(new_data, type, dedicator, dedicatul);
 
-			 int ok = add_last(&arr, &len, new_data);
-			//  printf("arr in main: %p\n", arr);
+			int ok = add_last(&arr, &len, new_data);
 
 			free(new_data->header);
 			free(new_data->data);
@@ -243,10 +341,7 @@ int main()
 		}
 
 		if (strcmp(command, "print") == 0)
-		{
-			// printf("placintica\n");
 			print(arr, len);
-		}
 
 		if (strcmp(command, "exit") == 0)
 			exit = 1;
