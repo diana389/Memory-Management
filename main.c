@@ -77,7 +77,7 @@ void print(void *arr, int len)
 
 	while (arr - ptr < len)
 	{
-		printf("Tipul: %hhu\n", *(unsigned char *)arr);
+		printf("Tipul %hhu\n", *(unsigned char *)arr);
 		type = *(unsigned char *)arr;
 		arr += 4 * sizeof(unsigned char);
 
