@@ -171,11 +171,9 @@ int add_at(void **arr, int *len, data_structure *data, int index)
 	{
 		*arr += 4 * sizeof(unsigned char);
 		data_len = *(unsigned int *)*arr;
-		// printf("data_len: %d\n", data_len);
 		*arr += sizeof(unsigned int);
 		*arr += data_len;
 		current_len_arr += 4 * sizeof(unsigned char) + sizeof(unsigned int) + data_len;
-		// printf("current_len: %d\nlen: %d\n", current_len_arr, *len);
 		contor++;
 	}
 
@@ -266,7 +264,6 @@ int delete_at(void **arr, int *len, int index)
 	memcpy(*arr, *arr + sizeof(head) + data_len, *len - current_len_arr - sizeof(head) - data_len);
 	*arr = start_arr;
 	*arr = realloc(*arr, *len - sizeof(head) - data_len);
-	//printf("PT MARI: %d\n", *len - sizeof(head) - data_len);
 	*len = *len - sizeof(head) - data_len;
 
 	return 1;
