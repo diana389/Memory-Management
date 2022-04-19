@@ -139,7 +139,7 @@ int add_last(void **arr, int *len, data_structure *data)
 {
 	if (*len == 0)
 		*arr = malloc(sizeof(data->header) + data->header->len);
-	else if (*len > 0)
+	else
 		*arr = realloc(*arr, *len + sizeof(data->header) + data->header->len);
 
 	void *ptr = *arr;
@@ -159,15 +159,86 @@ int add_last(void **arr, int *len, data_structure *data)
 	return 0;
 }
 
-// int add_at(void **arr, int *len, data_structure *data, int index)
-// {
+int add_at(void **arr, int *len, data_structure *data, int index)
+{
 
-// }
+	if (index < 0)
+		return 0;
 
-// void find(void *data_block, int len, int index)
-// {
+	int contor = 0, current_len_arr = 0;
+	unsigned int data_len, elem_len;
+	void *start_arr = *arr;
 
-// }
+	while (contor != index && current_len_arr < *len)
+	{
+		*arr += 4 * sizeof(unsigned char);
+		data_len = *(unsigned int *)*arr;
+		//printf("data_len: %d\n", data_len);
+		*arr += sizeof(unsigned int);
+		*arr += data_len;
+		current_len_arr += 4 * sizeof(unsigned char) + sizeof(unsigned int) + data_len;
+		//printf("current_len: %d\nlen: %d\n", current_len_arr, *len);
+		contor++;
+	}
+
+	if (current_len_arr >= *len)
+	{
+		*arr = start_arr;
+		int ok = add_last(arr, len, data);
+		return 1;
+	}
+
+	// void *new_arr = NULL;
+	// new_arr = malloc(*len - current_len_arr);
+
+	// memcpy(new_arr, *arr, *len - current_len_arr);
+	// //*arr += current_len_arr;
+
+	// memcpy(*arr, &(data->header->type), sizeof(data->header->type));
+	// *arr += 4 * sizeof(unsigned char);
+	// memcpy(*arr, &data->header->len, sizeof(data->header->len));
+	// *arr += sizeof(unsigned int);
+
+	// memcpy(*arr, data->data, data->header->len);
+
+	// current_len_arr += sizeof(data->header) + data->header->len;
+	// *len = current_len_arr;
+	// free(new_arr);
+
+	// *arr = realloc(*arr, len + sizeof(data->header) + data->header->len);
+	// memcpy(*arr + sizeof(data->header) + data->header->len, *arr, len - current_len_arr);
+	return 1;
+}
+
+void find(void *data_block, int len, int index)
+{
+	if (index < 0)
+		return;
+
+	int contor = 0, current_len_arr = 0;
+	unsigned int data_len, elem_len;
+
+	while (contor != index && current_len_arr < len)
+	{
+		data_block += 4 * sizeof(unsigned char);
+		data_len = *(unsigned int *)data_block;
+		data_block += sizeof(unsigned int);
+		data_block += data_len;
+		current_len_arr += 4 * sizeof(unsigned char) + sizeof(unsigned int) + data_len;
+		contor++;
+	}
+
+	if (current_len_arr >= len)
+		return;
+
+	void *start = data_block;
+	data_block += 4 * sizeof(unsigned char);
+	data_len = *(unsigned int *)data_block;
+	elem_len = 4 * sizeof(unsigned char) + sizeof(unsigned int) + data_len;
+
+	data_block = start;
+	print(data_block, elem_len);
+}
 
 // int delete_at(void **arr, int *len, int index)
 // {
@@ -319,8 +390,8 @@ void add_new_data(data_structure *new_data, unsigned char type, char *dedicator,
 int main()
 {
 	void *arr = NULL;
-	int len = 0, exit = 0, suma1, suma2;
-	char command[257], dedicator[30] = "ion", dedicatul[30] = "maria";
+	int len = 0, exit = 0;
+	char command[257], dedicator[257] = "ion", dedicatul[257] = "maria";
 	unsigned char type;
 
 	while (exit == 0)
@@ -338,6 +409,28 @@ int main()
 			free(new_data->header);
 			free(new_data->data);
 			free(new_data);
+		}
+
+		if (strcmp(command, "insert_at") == 0)
+		{
+			int index;
+			scanf("%d", &index);
+			scanf("%hhu", &type);
+			data_structure *new_data = (data_structure *)malloc(sizeof(data_structure));
+			add_new_data(new_data, type, dedicator, dedicatul);
+
+			int ok = add_at(&arr, &len, new_data, index);
+
+			free(new_data->header);
+			free(new_data->data);
+			free(new_data);
+		}
+
+		if (strcmp(command, "find") == 0)
+		{
+			int index;
+			scanf("%d", &index);
+			find(arr, len, index);
 		}
 
 		if (strcmp(command, "print") == 0)
