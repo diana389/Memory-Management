@@ -134,9 +134,9 @@ int add_at(void **arr, int *len, data_structure *data, int index)
 	*arr += sizeof(unsigned int);
 
 	memcpy(*arr, data->data, data->header->len);
-	 *arr = start_arr;
+	*arr = start_arr;
 
-	 *len += sizeof(data->header) + data->header->len;
+	*len += sizeof(data->header) + data->header->len;
 
 	return 1;
 }
@@ -205,58 +205,6 @@ int delete_at(void **arr, int *len, int index)
 	return 1;
 }
 
-void print_data(data_structure *data)
-{
-	void *ptr = data->data;
-
-	printf("dedicator: ");
-	while (*(char *)data->data != '\0')
-	{
-		printf("%c", *(char *)data->data);
-		data->data += sizeof(char);
-	}
-	data->data += sizeof(char);
-	printf("\n");
-
-	printf("dedicatul: ");
-	while (*(char *)data->data != '\0')
-	{
-		printf("%c", *(char *)data->data);
-		data->data += sizeof(char);
-	}
-	data->data += sizeof(char);
-	printf("\n");
-
-	if (data->header->type == 1)
-	{
-		printf("suma1: %" PRId8 "\n", *(int8_t *)data->data);
-		data->data += sizeof(int8_t);
-
-		printf("suma2: %" PRId8 "\n", *(int8_t *)data->data);
-		data->data += sizeof(int8_t);
-	}
-
-	if (data->header->type == 2)
-	{
-		printf("suma1: %" PRId16 "\n", *(int16_t *)data->data);
-		data->data += sizeof(int16_t);
-
-		printf("suma2: %" PRId32 "\n", *(int32_t *)data->data);
-		data->data += sizeof(int32_t);
-	}
-
-	if (data->header->type == 3)
-	{
-		printf("suma1: %" PRId32 "\n", *(int32_t *)data->data);
-		data->data += sizeof(int32_t);
-
-		printf("suma2: %" PRId32 "\n", *(int32_t *)data->data);
-		data->data += sizeof(int32_t);
-	}
-
-	data->data = ptr;
-}
-
 void add_new_data(data_structure *new_data, unsigned char type, char *dedicator, char *dedicatul)
 {
 	new_data->header = malloc(sizeof(head));
@@ -316,30 +264,29 @@ void add_new_data(data_structure *new_data, unsigned char type, char *dedicator,
 		}
 		else
 		{
-				int32_t suma1, suma2;
-				scanf("%s%" SCNd32 "%" SCNd32 "%s", dedicator, &suma1, &suma2, dedicatul);
+			int32_t suma1, suma2;
+			scanf("%s%" SCNd32 "%" SCNd32 "%s", dedicator, &suma1, &suma2, dedicatul);
 
-				new_data->header->len = (strlen(dedicator) + strlen(dedicatul) + 2) * sizeof(char) + 2 * sizeof(int32_t);
-				new_data->data = malloc(new_data->header->len);
+			new_data->header->len = (strlen(dedicator) + strlen(dedicatul) + 2) * sizeof(char) + 2 * sizeof(int32_t);
+			new_data->data = malloc(new_data->header->len);
 
-				void *ptr = new_data->data;
+			void *ptr = new_data->data;
 
-				memcpy(new_data->data, dedicator, strlen(dedicator) + 1);
-				new_data->data += strlen(dedicator) + 1;
+			memcpy(new_data->data, dedicator, strlen(dedicator) + 1);
+			new_data->data += strlen(dedicator) + 1;
 
-				memcpy(new_data->data, dedicatul, strlen(dedicatul) + 1);
-				new_data->data += strlen(dedicatul) + 1;
+			memcpy(new_data->data, dedicatul, strlen(dedicatul) + 1);
+			new_data->data += strlen(dedicatul) + 1;
 
-				memcpy(new_data->data, &suma1, sizeof(int32_t));
-				new_data->data += sizeof(int32_t);
+			memcpy(new_data->data, &suma1, sizeof(int32_t));
+			new_data->data += sizeof(int32_t);
 
-				memcpy(new_data->data, &suma2, sizeof(int32_t));
-				new_data->data += sizeof(int32_t);
+			memcpy(new_data->data, &suma2, sizeof(int32_t));
+			new_data->data += sizeof(int32_t);
 
-				new_data->data = ptr;
+			new_data->data = ptr;
 		}
 	}
-	// print_data(new_data);
 }
 
 int main()
