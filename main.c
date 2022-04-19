@@ -7,7 +7,6 @@
 void print_pt_mine(void *arr, int len)
 {
 	void *ptr = arr;
-	int i;
 	unsigned char type;
 
 	while (arr - ptr < len)
@@ -72,7 +71,6 @@ void print_pt_mine(void *arr, int len)
 void print(void *arr, int len)
 {
 	void *ptr = arr;
-	int i;
 	unsigned char type;
 
 	while (arr - ptr < len)
@@ -166,7 +164,7 @@ int add_at(void **arr, int *len, data_structure *data, int index)
 		return 0;
 
 	int contor = 0, current_len_arr = 0;
-	unsigned int data_len, elem_len;
+	unsigned int data_len;
 	void *start_arr = *arr;
 
 	while (contor != index && current_len_arr < *len)
@@ -191,20 +189,21 @@ int add_at(void **arr, int *len, data_structure *data, int index)
 	}
 
 	*arr = realloc(*arr, *len + sizeof(data->header) + data->header->len);
-	
+	start_arr = *arr;
+
 	*arr += current_len_arr;
 	memcpy(*arr + sizeof(data->header) + data->header->len, *arr, *len - current_len_arr);
-	
+
 	memcpy(*arr, &(data->header->type), sizeof(data->header->type));
 	*arr += 4 * sizeof(unsigned char);
 	memcpy(*arr, &data->header->len, sizeof(data->header->len));
 	*arr += sizeof(unsigned int);
 
 	memcpy(*arr, data->data, data->header->len);
-	*arr = start_arr;
+	 *arr = start_arr;
 
-	*len += sizeof(data->header) + data->header->len;
-	
+	 *len += sizeof(data->header) + data->header->len;
+
 	return 1;
 }
 
@@ -238,10 +237,40 @@ void find(void *data_block, int len, int index)
 	print(data_block, elem_len);
 }
 
-// int delete_at(void **arr, int *len, int index)
-// {
+int delete_at(void **arr, int *len, int index)
+{
+	if (index < 0)
+		return 0;
 
-// }
+	int contor = 0, current_len_arr = 0;
+	unsigned int data_len;
+	void *start_arr = *arr;
+
+	while (contor != index && current_len_arr < *len)
+	{
+		*arr += 4 * sizeof(unsigned char);
+		data_len = *(unsigned int *)*arr;
+		*arr += sizeof(unsigned int);
+		*arr += data_len;
+		current_len_arr += 4 * sizeof(unsigned char) + sizeof(unsigned int) + data_len;
+		contor++;
+	}
+
+	if (current_len_arr >= *len)
+		return 0;
+
+	*arr += 4 * sizeof(unsigned char);
+	data_len = *(unsigned int *)*arr;
+	*arr = start_arr + current_len_arr;
+
+	memcpy(*arr, *arr + sizeof(head) + data_len, *len - current_len_arr - sizeof(head) - data_len);
+	*arr = start_arr;
+	*arr = realloc(*arr, *len - sizeof(head) - data_len);
+	//printf("PT MARI: %d\n", *len - sizeof(head) - data_len);
+	*len = *len - sizeof(head) - data_len;
+
+	return 1;
+}
 
 void print_data(data_structure *data)
 {
@@ -354,8 +383,6 @@ void add_new_data(data_structure *new_data, unsigned char type, char *dedicator,
 		}
 		else
 		{
-			if (type == 3)
-			{
 				int32_t suma1, suma2;
 				scanf("%s%" SCNd32 "%" SCNd32 "%s", dedicator, &suma1, &suma2, dedicatul);
 
@@ -377,9 +404,6 @@ void add_new_data(data_structure *new_data, unsigned char type, char *dedicator,
 				new_data->data += sizeof(int32_t);
 
 				new_data->data = ptr;
-			}
-			else
-				return -1;
 		}
 	}
 	// print_data(new_data);
@@ -388,7 +412,7 @@ void add_new_data(data_structure *new_data, unsigned char type, char *dedicator,
 int main()
 {
 	void *arr = NULL;
-	int len = 0, exit = 0;
+	int len = 0, exit = 0, ok;
 	char command[257], dedicator[257] = "ion", dedicatul[257] = "maria";
 	unsigned char type;
 
@@ -402,7 +426,7 @@ int main()
 			data_structure *new_data = (data_structure *)malloc(sizeof(data_structure));
 			add_new_data(new_data, type, dedicator, dedicatul);
 
-			int ok = add_last(&arr, &len, new_data);
+			ok = add_last(&arr, &len, new_data);
 
 			free(new_data->header);
 			free(new_data->data);
@@ -417,11 +441,18 @@ int main()
 			data_structure *new_data = (data_structure *)malloc(sizeof(data_structure));
 			add_new_data(new_data, type, dedicator, dedicatul);
 
-			int ok = add_at(&arr, &len, new_data, index);
+			ok = add_at(&arr, &len, new_data, index);
 
 			free(new_data->header);
 			free(new_data->data);
 			free(new_data);
+		}
+
+		if (strcmp(command, "delete_at") == 0)
+		{
+			int index;
+			scanf("%d", &index);
+			ok = delete_at(&arr, &len, index);
 		}
 
 		if (strcmp(command, "find") == 0)
