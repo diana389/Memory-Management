@@ -173,40 +173,38 @@ int add_at(void **arr, int *len, data_structure *data, int index)
 	{
 		*arr += 4 * sizeof(unsigned char);
 		data_len = *(unsigned int *)*arr;
-		//printf("data_len: %d\n", data_len);
+		// printf("data_len: %d\n", data_len);
 		*arr += sizeof(unsigned int);
 		*arr += data_len;
 		current_len_arr += 4 * sizeof(unsigned char) + sizeof(unsigned int) + data_len;
-		//printf("current_len: %d\nlen: %d\n", current_len_arr, *len);
+		// printf("current_len: %d\nlen: %d\n", current_len_arr, *len);
 		contor++;
 	}
 
+	*arr = start_arr;
+
 	if (current_len_arr >= *len)
 	{
-		*arr = start_arr;
+
 		int ok = add_last(arr, len, data);
 		return 1;
 	}
 
-	// void *new_arr = NULL;
-	// new_arr = malloc(*len - current_len_arr);
+	*arr = realloc(*arr, *len + sizeof(data->header) + data->header->len);
+	
+	*arr += current_len_arr;
+	memcpy(*arr + sizeof(data->header) + data->header->len, *arr, *len - current_len_arr);
+	
+	memcpy(*arr, &(data->header->type), sizeof(data->header->type));
+	*arr += 4 * sizeof(unsigned char);
+	memcpy(*arr, &data->header->len, sizeof(data->header->len));
+	*arr += sizeof(unsigned int);
 
-	// memcpy(new_arr, *arr, *len - current_len_arr);
-	// //*arr += current_len_arr;
+	memcpy(*arr, data->data, data->header->len);
+	*arr = start_arr;
 
-	// memcpy(*arr, &(data->header->type), sizeof(data->header->type));
-	// *arr += 4 * sizeof(unsigned char);
-	// memcpy(*arr, &data->header->len, sizeof(data->header->len));
-	// *arr += sizeof(unsigned int);
-
-	// memcpy(*arr, data->data, data->header->len);
-
-	// current_len_arr += sizeof(data->header) + data->header->len;
-	// *len = current_len_arr;
-	// free(new_arr);
-
-	// *arr = realloc(*arr, len + sizeof(data->header) + data->header->len);
-	// memcpy(*arr + sizeof(data->header) + data->header->len, *arr, len - current_len_arr);
+	*len += sizeof(data->header) + data->header->len;
+	
 	return 1;
 }
 
