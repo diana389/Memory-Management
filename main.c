@@ -293,7 +293,7 @@ int main()
 {
 	void *arr = NULL;
 	int len = 0, exit = 0, ok;
-	char command[257], dedicator[257] = "ion", dedicatul[257] = "maria";
+	char command[257], dedicator[257], dedicatul[257];
 	unsigned char type;
 
 	while (exit == 0)
@@ -350,6 +350,5 @@ int main()
 	}
 
 	free(arr);
-
 	return 0;
 }
